@@ -20,7 +20,7 @@ Map loadStructure(FILE *file); // Prepares structure to be used
 Map createMap(int a, int b); // Creates map, allocates required memory
 void destroyMap(Map *map);   // Frees memory allocated by map
 void fillMap(Map *map, FILE *file); // Fills cells with chars in file
-char getCell(Map *map, int i); // Returns char that is on desired position
+unsigned char getCell(Map *map, int i); // Returns char that is on desired position
 
 int main(int argc, char *argv[]) {
     // Check if any arguments were provided
@@ -186,7 +186,7 @@ void fillMap(Map *map, FILE *file) {
             map->cells[i] = c;
             i++;
         }
-        if ( i == map->cols * map->rows) {
+        if (i == map->cols * map->rows) {
             break;
         }
     }
@@ -199,7 +199,7 @@ void fillMap(Map *map, FILE *file) {
  * @param i Position of char
  * @return Char that is on desired position or x if out of bounds
  */
-char getCell(Map *map, int i) {
+unsigned char getCell(Map *map, int i) {
     if (i < map->cols * map->rows) {
         return map->cells[i];
     } else {
