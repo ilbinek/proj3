@@ -1,3 +1,3 @@
-C:\Users\ilbinek\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\192.6603.37\bin\cmake\win\bin\cmake.exe -E remove -f CMakeFiles\proj3.dir/objects.a
-C:\Projekty\Min\bin\ar.exe cr CMakeFiles\proj3.dir/objects.a @CMakeFiles\proj3.dir\objects1.rsp
-C:\Projekty\Min\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\proj3.dir/objects.a -Wl,--no-whole-archive  -o proj3.exe -Wl,--out-implib,libproj3.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\proj3.dir\linklibs.rsp
+"D:\Programs\CLion 2019.1.4\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\proj3.dir/objects.a
+C:\MinGW\bin\ar.exe cr CMakeFiles\proj3.dir/objects.a @CMakeFiles\proj3.dir\objects1.rsp
+C:\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\proj3.dir/objects.a -Wl,--no-whole-archive  -o proj3.exe -Wl,--out-implib,libproj3.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\proj3.dir\linklibs.rsp

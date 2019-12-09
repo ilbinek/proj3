@@ -1,4 +1,4 @@
-ToolSet: w64 3.3 (local)@C:\Projekty\Min
+ToolSet: 5.2 (local)@C:\MinGW
 Options: 
 
 Options:
