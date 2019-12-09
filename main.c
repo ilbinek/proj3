@@ -16,7 +16,11 @@ typedef struct {
 
 void printHelp();   // Prints help text
 
-int main(int argc, char* argv[]) {
+Map loadStructure(FILE *file); // Prepares structure to be used
+void destroyMap(Map *map);   // Frees memory allocated by map
+
+
+int main(int argc, char *argv[]) {
     // Check if any arguments were provided
     if (argc > 1) {
         // Check provided arguments and decide what to do
@@ -33,8 +37,16 @@ int main(int argc, char* argv[]) {
             // TODO Implement test code
             // Check file
             FILE *fptr = fopen(argv[3], "r");
-
+            if (fptr == NULL) {
+                fputs("File could't be opened", stderr);
+            }
             // Load into structure
+            Map map = loadStructure(fptr);
+            // Check for errors
+            if (errno == 1) {
+                fputs("Error while creating structure", stderr);
+                return 1;
+            }
             // Close file
             fclose(fptr);
             // Check structure if valid
@@ -63,7 +75,7 @@ int main(int argc, char* argv[]) {
             }
             // TODO Implement shortest code
         } else {
-            char* str = "Invalid flags!\n"
+            char *str = "Invalid flags!\n"
                         "Reffer to help\n"
                         "./proj3 --help\n";
             fputs(str, stderr);
@@ -75,11 +87,26 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
+Map loadStructure(FILE *file) {
+    // Get dimensions
+    int a = 0;
+    int b = 0;
+    // Check dimensions
+    if ()
+    // Create map with given dimensions
+
+    // Check creation
+    if (errno == 1) {
+        destroyMap(&map);
+        return ;
+    }
+}
+
 /**
  * This function print's help for this program and how to use it
  */
 void printHelp() {
-    char* str = "Help for proj3\n\n"
+    char *str = "Help for proj3\n\n"
                 "Program usage: ./proj3 [FLAG] R C [FILE]\n"
                 "R - x coordinate of start\n"
                 "C - Y coordinate of start\n\n"
@@ -90,4 +117,39 @@ void printHelp() {
                 "--lpath            Find exit based in left hand rule\n"
                 "--shortest         Finds exit that is closest to the start\n";
     printf("%s", str);
+}
+
+
+
+// Help methods for Map
+/**
+ * Function that creates map, allocated required memory and fills with e
+ * @param a rows dimension
+ * @param b cols dimension
+ * @return fully alocated map filled with 'e'
+ */
+Map createMap(int a, int b) {
+    Map map;
+    map.rows = a;
+    map.cols = b;
+
+    // Calculate size and allocate it
+    int size = (int) sizeof(unsigned char) * a * b;
+    map.cells = malloc(size);
+
+    // Check allocation and fill
+    if (map.cells != NULL) {
+        for (int i = 0; i < a * b; ++i) {
+            map.cells[i] = 'e';
+        }
+    } else {
+        errno = 1;
+    }
+    return map;
+}
+
+void destroyMap(Map *map) {
+    map->cols = -1;
+    map->rows = -1;
+    free(map->cells);
 }
