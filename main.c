@@ -17,8 +17,10 @@ typedef struct {
 void printHelp();   // Prints help text
 
 Map loadStructure(FILE *file); // Prepares structure to be used
+Map createMap(int a, int b); // Creates map, allocates required memory
 void destroyMap(Map *map);   // Frees memory allocated by map
-
+void fillMap(Map *map, FILE *file); // Fills cells with chars in file
+char getCell(Map *map, int i); // Returns char that is on desired position
 
 int main(int argc, char *argv[]) {
     // Check if any arguments were provided
@@ -39,16 +41,18 @@ int main(int argc, char *argv[]) {
             FILE *fptr = fopen(argv[3], "r");
             if (fptr == NULL) {
                 fputs("File could't be opened", stderr);
+                return -1;
             }
             // Load into structure
             Map map = loadStructure(fptr);
-            // Check for errors
-            if (errno == 1) {
-                fputs("Error while creating structure", stderr);
-                return 1;
-            }
             // Close file
             fclose(fptr);
+            // Check for errors
+            if (errno == 1) {
+                fputs("Invalid", stdout);
+                return 1;
+            }
+
             // Check structure if valid
         } else if (strcmp(argv[1], "--rpath") == 0) {
             // Check if third argument was provided
@@ -89,17 +93,39 @@ int main(int argc, char *argv[]) {
 
 Map loadStructure(FILE *file) {
     // Get dimensions
-    int a = 0;
-    int b = 0;
+    char ac;
+    char bc;
+
+    fscanf(file, "%c", &ac);
+    int a = ac - '0';
+    fscanf(file, "%c", &bc);
+    fscanf(file, "%c", &bc);
+    int b = bc - '0';
+
+
+    Map map;
+
     // Check dimensions
-    if ()
+    if (a < 1 || b < 1) {
+        errno = 1;
+        map = createMap(0, 0);
+        return map;
+    }
+
     // Create map with given dimensions
+    map = createMap(a, b);
 
     // Check creation
     if (errno == 1) {
         destroyMap(&map);
-        return ;
+        return map;
     }
+
+    // Fill map with numbers
+    fillMap(&map, file);
+
+    // Returns map
+    return map;
 }
 
 /**
@@ -119,14 +145,12 @@ void printHelp() {
     printf("%s", str);
 }
 
-
-
 // Help methods for Map
 /**
- * Function that creates map, allocated required memory and fills with e
+ * Function that creates map, allocates required memory
  * @param a rows dimension
  * @param b cols dimension
- * @return fully alocated map filled with 'e'
+ * @return fully allocated map filled with 'e'
  */
 Map createMap(int a, int b) {
     Map map;
@@ -148,6 +172,45 @@ Map createMap(int a, int b) {
     return map;
 }
 
+/**
+ * Fills cells with chars in file
+ * @param map Map that will be filled
+ * @param file File that will be read from
+ */
+void fillMap(Map *map, FILE *file) {
+    int i = 0;
+    int cin = 0;
+    while ((cin = fgetc(file)) != EOF) {
+        char c = (char) cin;
+        if (c != ' ' && c != '\n') {
+            map->cells[i] = c;
+            i++;
+        }
+        if ( i == map->cols * map->rows) {
+            break;
+        }
+    }
+
+}
+
+/**
+ * Returns char that is on desired position
+ * @param map Map to be searched
+ * @param i Position of char
+ * @return Char that is on desired position or x if out of bounds
+ */
+char getCell(Map *map, int i) {
+    if (i < map->cols * map->rows) {
+        return map->cells[i];
+    } else {
+        return 'x';
+    }
+}
+
+/**
+ * Frees allocated memory of a map
+ * @param map Map to be freed
+ */
 void destroyMap(Map *map) {
     map->cols = -1;
     map->rows = -1;
