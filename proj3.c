@@ -324,5 +324,9 @@ void destroyMap(Map *map) {
  * @param map Map to be printed
  */
 void printMap(Map *map) {
-    // TODO Implement
+    for (int i = 0; i < map->rows; ++i) {
+        for (int j = 0; j < map->cols; ++j) {
+            printf("%c", getCell(map, i * map->cols + j));
+        }
+    }
 }
