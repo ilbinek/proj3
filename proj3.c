@@ -32,6 +32,7 @@ void fillMap(Map *map, FILE *file); // Fills cells with chars in file
 unsigned char getCell(Map *map, int i); // Returns char that is on desired position
 void printMap(Map *map); // Prints map
 
+int start_border(Map *map, int r, int c, int leftright); // Finds the wall that should be followed
 bool isBorder(Map *map, int r, int c, Border border);
 bool testMap(Map *map); // Tests map if valid
 
@@ -110,6 +111,66 @@ int main(int argc, char *argv[]) {
         printHelp();
     }
     return 0;
+}
+
+/**
+ * Returns which wall to follow
+ * @param map Map that will be used
+ * @param r X coordinate of start
+ * @param c Y coordinate of start
+ * @param leftright Rule of left hand
+ * @return Index of wall which to follow
+ */
+int start_border(Map *map, int r, int c, int leftright) {
+    // if from corner
+    if (leftright) {
+        // Left hand
+        if (c == 0) {   // Left side
+            if (r % 2 == 0) {   // Direction
+                return MIDDLE;
+            } else {
+                return RIGHT;
+            }
+        } else if (c == map->cols - 1) {    // Right side
+            if ((r + c) % 2 == 0) {     // Direction
+                return LEFT;
+            } else {
+                return MIDDLE;
+            }
+        } else if (r == 0) {
+            if (c % 2 == 0) {
+                return RIGHT;
+            }
+        } else if (r == map->rows - 1){
+            if (c % 2 == 0) {
+                return LEFT;
+            }
+        }
+    } else {
+        // Right hand
+        if (c == 0) {   // Left side
+            if (r % 2 == 0) {   // Direction
+                return RIGHT;
+            } else {
+                return MIDDLE;
+            }
+        } else if (c == map->cols - 1) {    // Right side
+            if ((r + c) % 2 == 0) {
+                return MIDDLE;
+            } else {
+                return LEFT;
+            }
+        } else if (r == 0) {
+            if (c % 2 == 0) {
+                return LEFT;
+            }
+        } else if (r == map->rows - 1){
+            if (c % 2 == 0) {
+                return RIGHT;
+            }
+        }
+    }
+    return -1;
 }
 
 /**
@@ -199,6 +260,11 @@ bool isBorder(Map *map, int r, int c, Border border) {
     }
 }
 
+/**
+ * Creates, fills and loads map
+ * @param File File that should be loaded
+ * @return Initialized map
+ */
 Map loadStructure(FILE *file) {
     // Get dimensions
     char ac;
