@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/proj3.dir/main.c.obj"
+  "CMakeFiles/proj3.dir/proj3.c.obj"
   "libproj3.dll.a"
   "proj3.exe"
   "proj3.exe.manifest"

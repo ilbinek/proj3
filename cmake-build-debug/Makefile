@@ -122,32 +122,32 @@ proj3/fast:
 	$(MAKE) -f CMakeFiles\proj3.dir\build.make CMakeFiles/proj3.dir/build
 .PHONY : proj3/fast
 
-main.obj: main.c.obj
+proj3.obj: proj3.c.obj
 
-.PHONY : main.obj
+.PHONY : proj3.obj
 
 # target to build an object file
-main.c.obj:
-	$(MAKE) -f CMakeFiles\proj3.dir\build.make CMakeFiles/proj3.dir/main.c.obj
-.PHONY : main.c.obj
+proj3.c.obj:
+	$(MAKE) -f CMakeFiles\proj3.dir\build.make CMakeFiles/proj3.dir/proj3.c.obj
+.PHONY : proj3.c.obj
 
-main.i: main.c.i
+proj3.i: proj3.c.i
 
-.PHONY : main.i
+.PHONY : proj3.i
 
 # target to preprocess a source file
-main.c.i:
-	$(MAKE) -f CMakeFiles\proj3.dir\build.make CMakeFiles/proj3.dir/main.c.i
-.PHONY : main.c.i
+proj3.c.i:
+	$(MAKE) -f CMakeFiles\proj3.dir\build.make CMakeFiles/proj3.dir/proj3.c.i
+.PHONY : proj3.c.i
 
-main.s: main.c.s
+proj3.s: proj3.c.s
 
-.PHONY : main.s
+.PHONY : proj3.s
 
 # target to generate assembly for a file
-main.c.s:
-	$(MAKE) -f CMakeFiles\proj3.dir\build.make CMakeFiles/proj3.dir/main.c.s
-.PHONY : main.c.s
+proj3.c.s:
+	$(MAKE) -f CMakeFiles\proj3.dir\build.make CMakeFiles/proj3.dir/proj3.c.s
+.PHONY : proj3.c.s
 
 # Help Target
 help:
@@ -158,9 +158,9 @@ help:
 	@echo ... proj3
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... main.obj
-	@echo ... main.i
-	@echo ... main.s
+	@echo ... proj3.obj
+	@echo ... proj3.i
+	@echo ... proj3.s
 .PHONY : help
 
 

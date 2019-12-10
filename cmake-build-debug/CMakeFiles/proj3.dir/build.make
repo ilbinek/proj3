@@ -56,27 +56,27 @@ include CMakeFiles/proj3.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/proj3.dir/flags.make
 
-CMakeFiles/proj3.dir/main.c.obj: CMakeFiles/proj3.dir/flags.make
-CMakeFiles/proj3.dir/main.c.obj: ../main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\Projects\School\c\proj3\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/proj3.dir/main.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\proj3.dir\main.c.obj   -c D:\Projects\School\c\proj3\main.c
+CMakeFiles/proj3.dir/proj3.c.obj: CMakeFiles/proj3.dir/flags.make
+CMakeFiles/proj3.dir/proj3.c.obj: ../proj3.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\Projects\School\c\proj3\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/proj3.dir/proj3.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\proj3.dir\proj3.c.obj   -c D:\Projects\School\c\proj3\proj3.c
 
-CMakeFiles/proj3.dir/main.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/proj3.dir/main.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E D:\Projects\School\c\proj3\main.c > CMakeFiles\proj3.dir\main.c.i
+CMakeFiles/proj3.dir/proj3.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/proj3.dir/proj3.c.i"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E D:\Projects\School\c\proj3\proj3.c > CMakeFiles\proj3.dir\proj3.c.i
 
-CMakeFiles/proj3.dir/main.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/proj3.dir/main.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S D:\Projects\School\c\proj3\main.c -o CMakeFiles\proj3.dir\main.c.s
+CMakeFiles/proj3.dir/proj3.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/proj3.dir/proj3.c.s"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S D:\Projects\School\c\proj3\proj3.c -o CMakeFiles\proj3.dir\proj3.c.s
 
 # Object files for target proj3
 proj3_OBJECTS = \
-"CMakeFiles/proj3.dir/main.c.obj"
+"CMakeFiles/proj3.dir/proj3.c.obj"
 
 # External object files for target proj3
 proj3_EXTERNAL_OBJECTS =
 
-proj3.exe: CMakeFiles/proj3.dir/main.c.obj
+proj3.exe: CMakeFiles/proj3.dir/proj3.c.obj
 proj3.exe: CMakeFiles/proj3.dir/build.make
 proj3.exe: CMakeFiles/proj3.dir/linklibs.rsp
 proj3.exe: CMakeFiles/proj3.dir/objects1.rsp

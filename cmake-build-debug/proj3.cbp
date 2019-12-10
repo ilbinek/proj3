@@ -74,7 +74,7 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="D:/Projects/School/c/proj3/main.c">
+		<Unit filename="D:/Projects/School/c/proj3/proj3.c">
 			<Option target="proj3"/>
 		</Unit>
 		<Unit filename="D:/Projects/School/c/proj3/CMakeLists.txt">

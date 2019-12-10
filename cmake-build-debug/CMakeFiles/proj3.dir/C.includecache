@@ -6,12 +6,14 @@
 
 #IncludeRegexTransform: 
 
-D:/Projects/School/c/proj3/main.c
+D:/Projects/School/c/proj3/proj3.c
 stdio.h
 -
 stdlib.h
 -
 string.h
+-
+errno.h
 -
 stdbool.h
 -
