@@ -30,9 +30,9 @@ Map createMap(int a, int b); // Creates map, allocates required memory
 void destroyMap(Map *map);   // Frees memory allocated by map
 void fillMap(Map *map, FILE *file); // Fills cells with chars in file
 unsigned char getCell(Map *map, int i); // Returns char that is on desired position
+void printMap(Map *map); // Prints map
 
 bool isBorder(Map *map, int r, int c, Border border);
-
 bool testMap(Map *map); // Tests map if valid
 
 int main(int argc, char *argv[]) {
@@ -62,8 +62,10 @@ int main(int argc, char *argv[]) {
             // Check for errors
             if (errno == 1) {
                 fputs("Invalid", stdout);
+                destroyMap(&map);
                 return 0;
             }
+            //printMap(&map);
             // Check structure if valid
             bool valid = testMap(&map);
             if (valid) {
@@ -329,4 +331,5 @@ void printMap(Map *map) {
             printf("%c", getCell(map, i * map->cols + j));
         }
     }
+    printf("\n");
 }
