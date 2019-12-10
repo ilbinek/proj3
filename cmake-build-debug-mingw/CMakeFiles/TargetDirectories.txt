@@ -1,0 +1,3 @@
+D:/Projects/School/c/proj3/cmake-build-debug-mingw/CMakeFiles/proj3.dir
+D:/Projects/School/c/proj3/cmake-build-debug-mingw/CMakeFiles/edit_cache.dir
+D:/Projects/School/c/proj3/cmake-build-debug-mingw/CMakeFiles/rebuild_cache.dir
