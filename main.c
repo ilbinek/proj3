@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 /**
  * @author Sotirios Pupakis xpupak01
@@ -14,6 +15,13 @@ typedef struct {
     unsigned char *cells;
 } Map;
 
+// Enum
+typedef enum {
+    LEFT = 0,
+    RIGHT = 1,
+    MIDDLE = 2
+} Border;
+
 void printHelp();   // Prints help text
 
 Map loadStructure(FILE *file); // Prepares structure to be used
@@ -21,6 +29,10 @@ Map createMap(int a, int b); // Creates map, allocates required memory
 void destroyMap(Map *map);   // Frees memory allocated by map
 void fillMap(Map *map, FILE *file); // Fills cells with chars in file
 unsigned char getCell(Map *map, int i); // Returns char that is on desired position
+
+bool isBorder(Map *map, int r, int c, Border border);
+
+bool testMap(Map map); // Tests map if valid
 
 int main(int argc, char *argv[]) {
     // Check if any arguments were provided
@@ -36,11 +48,10 @@ int main(int argc, char *argv[]) {
                 fputs("No third argument provided\n", stderr);
                 return -1;
             }
-            // TODO Implement test code
             // Check file
             FILE *fptr = fopen(argv[3], "r");
             if (fptr == NULL) {
-                fputs("File could't be opened", stderr);
+                fputs("File could't be opened\n", stderr);
                 return -1;
             }
             // Load into structure
@@ -50,10 +61,15 @@ int main(int argc, char *argv[]) {
             // Check for errors
             if (errno == 1) {
                 fputs("Invalid", stdout);
-                return 1;
+                return 0;
             }
-
             // Check structure if valid
+            bool valid = testMap(map);
+            if (valid) {
+                printf("Valid\n");
+            } else {
+                printf("Invalid\n");
+            }
         } else if (strcmp(argv[1], "--rpath") == 0) {
             // Check if third argument was provided
             if (argc < 2) {
@@ -89,6 +105,58 @@ int main(int argc, char *argv[]) {
         printHelp();
     }
     return 0;
+}
+
+/**
+ * Tests map if valid
+ * @param map Map to be tested
+ * @return Returns if map is valid
+ */
+bool testMap(Map map) {
+    bool ret = true;
+
+    return 0;
+}
+
+/**
+ * Check if desired border is solid or transparent
+ * @param map Map to be checked
+ * @param r Row coordinate of desire cell
+ * @param c Coll coordinate of desired cell
+ * @param border Border to be checked
+ * @return Returns if desired border is solid
+ */
+bool isBorder(Map *map, int r, int c, Border border) {
+    if (border > 2 || border < 0) {
+        return false;
+    }
+
+    char cell = (char) getCell(map, r * map->cols + c);
+    switch (border) {
+        case LEFT:
+            if (cell == '1' || cell == '3' || cell == '5' || cell == '7') {
+                return true;
+            } else {
+                return false;
+            }
+
+        case RIGHT:
+            if (cell == '2' || cell == '3' || cell == '6' || cell == '7') {
+                return true;
+            } else {
+                return false;
+            }
+
+        case MIDDLE:
+            if (cell == '4' || cell == '5' || cell == '6' || cell == '7') {
+                return true;
+            } else {
+                return false;
+            }
+
+        default:
+            return false;
+    }
 }
 
 Map loadStructure(FILE *file) {
