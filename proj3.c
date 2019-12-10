@@ -16,12 +16,26 @@ typedef struct {
     unsigned char *cells;
 } Map;
 
-// Enum
+// Border enum
 typedef enum {
     LEFT = 0,
     RIGHT = 1,
     MIDDLE = 2
 } Border;
+
+// Direction enum
+typedef enum {
+    NORTH = 1,
+    SOUTH = 2,
+    EAST = 3,
+    WEST = 4
+} Direction;
+
+// Simple vector-like struct
+typedef struct {
+    int x;
+    int y;
+} Coordinates;
 
 void printHelp();   // Prints help text
 
@@ -35,6 +49,8 @@ void printMap(Map *map); // Prints map
 int start_border(Map *map, int r, int c, int leftright); // Finds the wall that should be followed
 bool isBorder(Map *map, int r, int c, Border border);
 bool testMap(Map *map); // Tests map if valid
+
+void solveIt(Map *map, Coordinates co, int left);
 
 int main(int argc, char *argv[]) {
     // Check if any arguments were provided
@@ -77,13 +93,54 @@ int main(int argc, char *argv[]) {
             // Clean up
             destroyMap(&map);
         } else if (strcmp(argv[1], "--rpath") == 0) {
-            // Check if third argument was provided
-            if (argc < 2) {
+            // Check if arguments were provided
+            if (argc < 4) {
                 // Prints error and exits
-                fputs("No third argument provided\n", stderr);
+                fputs("Not enough arguments provided\n", stderr);
                 return -1;
             }
+            // Check file
+            FILE *fptr = fopen(argv[4], "r");
+            if (fptr == NULL) {
+                fputs("File could't be opened\n", stderr);
+                return -1;
+            }
+            // Load into structure
+            Map map = loadStructure(fptr);
+            // Close file
+            fclose(fptr);
+            // Check for errors
+            if (errno == 1) {
+                fputs("Invalid", stdout);
+                destroyMap(&map);
+                return 0;
+            }
+            // Check structure if valid
+            bool valid = testMap(&map);
+            if (!valid) {
+                printf("Map is invalid, cannot proceed\n");
+                destroyMap(&map);
+                return 0;
+            }
             // TODO Implement rpath code
+            // Parse starting coordinates
+            int startX = atoi(argv[2]);
+            int startY = atoi(argv[3]);
+            // Make them programmer friendly
+            startX--;
+            startY--;
+            // Check validity
+            if (!(startX >= 0 && startY >= 0 && startX < map.cols && startY < map.rows)) {
+                fputs("Invalid starting point", stderr);
+                destroyMap(&map);
+                return -1;
+            }
+            // Structure that holds starting coords
+            Coordinates co = {startX, startY};
+            // Solve it for me please
+            solveIt(&map, co, 0);
+            // Clean up
+            destroyMap(&map);
         } else if (strcmp(argv[1], "--lpath") == 0) {
             // Check if third argument was provided
             if (argc < 4) {
@@ -111,6 +168,15 @@ int main(int argc, char *argv[]) {
         printHelp();
     }
     return 0;
+}
+
+/**
+ * Main solving function - main loop
+ * @param co Starting coordinates
+ * @param left Left hand rule
+ */
+void solveIt(Map *map, Coordinates co, int left) {
+    
 }
 
 /**
