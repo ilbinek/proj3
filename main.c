@@ -32,7 +32,7 @@ unsigned char getCell(Map *map, int i); // Returns char that is on desired posit
 
 bool isBorder(Map *map, int r, int c, Border border);
 
-bool testMap(Map map); // Tests map if valid
+bool testMap(Map *map); // Tests map if valid
 
 int main(int argc, char *argv[]) {
     // Check if any arguments were provided
@@ -43,13 +43,13 @@ int main(int argc, char *argv[]) {
             printHelp();
         } else if (strcmp(argv[1], "--test") == 0) {
             // Check if third argument was provided
-            if (argc < 3) {
+            if (argc < 2) {
                 // Prints error and exits
                 fputs("No third argument provided\n", stderr);
                 return -1;
             }
             // Check file
-            FILE *fptr = fopen(argv[3], "r");
+            FILE *fptr = fopen(argv[2], "r");
             if (fptr == NULL) {
                 fputs("File could't be opened\n", stderr);
                 return -1;
@@ -64,12 +64,14 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
             // Check structure if valid
-            bool valid = testMap(map);
+            bool valid = testMap(&map);
             if (valid) {
                 printf("Valid\n");
             } else {
                 printf("Invalid\n");
             }
+            // Clean up
+            destroyMap(&map);
         } else if (strcmp(argv[1], "--rpath") == 0) {
             // Check if third argument was provided
             if (argc < 2) {
@@ -112,10 +114,45 @@ int main(int argc, char *argv[]) {
  * @param map Map to be tested
  * @return Returns if map is valid
  */
-bool testMap(Map map) {
-    bool ret = true;
+bool testMap(Map *map) {
+    // Check right sides - leave last from column
+    for (int i = 0; i < map->rows; ++i) {
+        for (int j = 0; j < map->cols - 1; ++j) {
+            if (isBorder(map, i, j, RIGHT) != isBorder(map, i, j + 1, LEFT)) {
+                return false;
+            }
+        }
+    }
 
-    return 0;
+    // Check middle - leave last row
+    for (int i = 0; i < map->rows - 1; ++i) {
+        for (int j = 0; j < map->cols; ++j) {
+            // If on top check only the ones aiming up
+            if (i == 0) {
+                if ((i + j) % 2 == 0) { // Aiming down
+                    // Skip
+                } else {
+                    // Check middle with the one lower
+                    if (isBorder(map, i, j, MIDDLE) != isBorder(map, i + 1, j, MIDDLE)) {
+                        return false;
+                    }
+                }
+            } else {
+                if ((i + j) % 2 == 0) { // Aiming down
+                    // Check middle with the one upper
+                    if (isBorder(map, i, j, MIDDLE) != isBorder(map, i - 1, j, MIDDLE)) {
+                        return false;
+                    }
+                } else {
+                    // Check middle with the one lower
+                    if (isBorder(map, i, j, MIDDLE) != isBorder(map, i + 1, j, MIDDLE)) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
 }
 
 /**
@@ -169,7 +206,6 @@ Map loadStructure(FILE *file) {
     fscanf(file, "%c", &bc);
     fscanf(file, "%c", &bc);
     int b = bc - '0';
-
 
     Map map;
 
@@ -249,13 +285,10 @@ void fillMap(Map *map, FILE *file) {
     int i = 0;
     int cin = 0;
     while ((cin = fgetc(file)) != EOF) {
-        char c = (char) cin;
+        unsigned char c = (unsigned char) cin;
         if (c != ' ' && c != '\n') {
             map->cells[i] = c;
             i++;
-        }
-        if (i == map->cols * map->rows) {
-            break;
         }
     }
 
@@ -283,4 +316,12 @@ void destroyMap(Map *map) {
     map->cols = -1;
     map->rows = -1;
     free(map->cells);
+}
+
+/**
+ * Prints cells of map
+ * @param map Map to be printed
+ */
+void printMap(Map *map) {
+    // TODO Implement
 }
