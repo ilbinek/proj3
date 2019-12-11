@@ -48,10 +48,13 @@ void printMap(Map *map); // Prints map
 
 int start_border(Map *map, int r, int c, int leftright); // Finds the wall that should be followed
 bool isBorder(Map *map, int r, int c, Border border);
+
 bool testMap(Map *map); // Tests map if valid
 
 void solveIt(Map *map, Coordinates co, int left); // Main solving loop
 int getOrientation(Coordinates current, Coordinates last); // Get's us the orientation we are facing
+
+Direction start_orientation(Map *map, int x, int y);
 
 int main(int argc, char *argv[]) {
     // Check if any arguments were provided
@@ -140,6 +143,11 @@ int main(int argc, char *argv[]) {
             Coordinates co = {startX, startY};
             // Solve it for me please
             solveIt(&map, co, 0);
+            if (errno == 1) {
+                destroyMap(&map);
+                fputs("Cannot enter maze from starting point", stderr);
+                return -1;
+            }
             // Clean up
             destroyMap(&map);
         } else if (strcmp(argv[1], "--lpath") == 0) {
@@ -160,7 +168,7 @@ int main(int argc, char *argv[]) {
             // TODO Implement shortest code
         } else {
             char *str = "Invalid flags!\n"
-                        "Reffer to help\n"
+                        "Refer to help\n"
                         "./proj3 --help\n";
             fputs(str, stderr);
             return -2;
@@ -179,8 +187,34 @@ int main(int argc, char *argv[]) {
 void solveIt(Map *map, Coordinates co, int left) {
     // Last coords
     Coordinates past = {co.x, co.y};
-    // Orientation
 
+    Border toFollow = start_border(map, co.x, co.y, left);
+    if (toFollow == -1) {
+        errno = 1;
+        return;
+    }
+
+    // Orientation
+    Direction dir = start_orientation(map, co.x, co.y);
+
+    
+}
+
+Direction start_orientation(Map *map, int x, int y) {
+    if (y == 0 && !isBorder(map, x, y, LEFT)) {   // Left side
+        return EAST;
+    } else if (y == map->cols - 1 && !isBorder(map, x, y, RIGHT)) {    // Right side
+        return WEST;
+    } else if (x == 0) {    // Top
+        if (y % 2 == 0) {
+            return WEST;
+        }
+    } else if (x == map->rows - 1) {    // Bottom
+        if (y % 2 == 0) {
+            return NORTH;
+        }
+    }
+    return -1;
 }
 
 /**
@@ -194,7 +228,7 @@ int getOrientation(Coordinates current, Coordinates last) {
         if (current.x - last.x == 1) {
             // Step left
             return EAST;
-        }  else {
+        } else {
             // Step right
             return WEST;
         }
@@ -202,7 +236,7 @@ int getOrientation(Coordinates current, Coordinates last) {
         if (current.y - last.y == 1) {
             // Step down
             return SOUTH;
-        }  else {
+        } else {
             // Step up
             return NORTH;
         }
@@ -218,39 +252,38 @@ int getOrientation(Coordinates current, Coordinates last) {
  * @return Index of wall which to follow
  */
 int start_border(Map *map, int r, int c, int leftright) {
-    // if from corner
     if (leftright) {
         // Left hand
-        if (c == 0) {   // Left side
+        if (c == 0 && !isBorder(map, r, c, LEFT)) {   // Left side
             if (r % 2 == 0) {   // Direction
                 return MIDDLE;
             } else {
                 return RIGHT;
             }
-        } else if (c == map->cols - 1) {    // Right side
+        } else if (c == map->cols - 1 && !isBorder(map, r, c, RIGHT)) {    // Right side
             if ((r + c) % 2 == 0) {     // Direction
                 return LEFT;
             } else {
                 return MIDDLE;
             }
-        } else if (r == 0) {
+        } else if (r == 0) {    // Top
             if (c % 2 == 0) {
                 return RIGHT;
             }
-        } else if (r == map->rows - 1){
+        } else if (r == map->rows - 1) {    // Bottom
             if (c % 2 == 0) {
                 return LEFT;
             }
         }
     } else {
         // Right hand
-        if (c == 0) {   // Left side
+        if (c == 0 && !isBorder(map, r, c, LEFT)) {   // Left side
             if (r % 2 == 0) {   // Direction
                 return RIGHT;
             } else {
                 return MIDDLE;
             }
-        } else if (c == map->cols - 1) {    // Right side
+        } else if (c == map->cols - 1 && !isBorder(map, r, c, RIGHT)) {    // Right side
             if ((r + c) % 2 == 0) {
                 return MIDDLE;
             } else {
@@ -260,7 +293,7 @@ int start_border(Map *map, int r, int c, int leftright) {
             if (c % 2 == 0) {
                 return LEFT;
             }
-        } else if (r == map->rows - 1){
+        } else if (r == map->rows - 1) {
             if (c % 2 == 0) {
                 return RIGHT;
             }
@@ -275,7 +308,7 @@ int start_border(Map *map, int r, int c, int leftright) {
  * @return Returns if map is valid
  */
 bool testMap(Map *map) {
-    // Check right sides - leave last from column
+    // Check right sides - leave last column
     for (int i = 0; i < map->rows; ++i) {
         for (int j = 0; j < map->cols - 1; ++j) {
             if (isBorder(map, i, j, RIGHT) != isBorder(map, i, j + 1, LEFT)) {
