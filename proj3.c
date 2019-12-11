@@ -50,7 +50,8 @@ int start_border(Map *map, int r, int c, int leftright); // Finds the wall that 
 bool isBorder(Map *map, int r, int c, Border border);
 bool testMap(Map *map); // Tests map if valid
 
-void solveIt(Map *map, Coordinates co, int left);
+void solveIt(Map *map, Coordinates co, int left); // Main solving loop
+int getOrientation(Coordinates current, Coordinates last); // Get's us the orientation we are facing
 
 int main(int argc, char *argv[]) {
     // Check if any arguments were provided
@@ -176,7 +177,36 @@ int main(int argc, char *argv[]) {
  * @param left Left hand rule
  */
 void solveIt(Map *map, Coordinates co, int left) {
-    
+    // Last coords
+    Coordinates past = {co.x, co.y};
+    // Orientation
+
+}
+
+/**
+ * Return the orientation we are facing
+ * @param current Current location
+ * @param last Previous location
+ * @return Faced orientation
+ */
+int getOrientation(Coordinates current, Coordinates last) {
+    if (current.x != last.x) { // Change in x coordinate
+        if (current.x - last.x == 1) {
+            // Step left
+            return EAST;
+        }  else {
+            // Step right
+            return WEST;
+        }
+    } else { // Change in Y coordinate
+        if (current.y - last.y == 1) {
+            // Step down
+            return SOUTH;
+        }  else {
+            // Step up
+            return NORTH;
+        }
+    }
 }
 
 /**
