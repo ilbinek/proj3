@@ -219,6 +219,7 @@ int main(int argc, char *argv[]) {
     } else {
         printHelp();
     }
+    printf("\n");
     return 0;
 }
 
@@ -231,7 +232,7 @@ void solveIt(Map *map, Coordinates co, int left) {
     // Last coords
 
     Border toFollow = start_border(map, co.x, co.y, left);
-    if (toFollow == -1) {
+    if (toFollow == 10) {
         errno = 1;
         return;
     }
@@ -463,7 +464,7 @@ int start_border(Map *map, int r, int c, int leftright) {
             }
         }
     }
-    return -1;
+    return 10;
 }
 
 /**
