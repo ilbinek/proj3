@@ -52,7 +52,6 @@ bool isBorder(Map *map, int r, int c, Border border);
 bool testMap(Map *map); // Tests map if valid
 
 void solveIt(Map *map, Coordinates co, int left); // Main solving loop
-int getOrientation(Coordinates current, Coordinates last); // Get's us the orientation we are facing
 
 Direction start_orientation(Map *map, int x, int y);
 
@@ -126,7 +125,6 @@ int main(int argc, char *argv[]) {
                 destroyMap(&map);
                 return 0;
             }
-            // TODO Implement rpath code
             // Parse starting coordinates
             int startX = atoi(argv[2]);
             int startY = atoi(argv[3]);
@@ -151,13 +149,58 @@ int main(int argc, char *argv[]) {
             // Clean up
             destroyMap(&map);
         } else if (strcmp(argv[1], "--lpath") == 0) {
-            // Check if third argument was provided
+            // Check if arguments were provided
             if (argc < 4) {
                 // Prints error and exits
-                fputs("No third argument provided\n", stderr);
+                fputs("Not enough arguments provided\n", stderr);
                 return -1;
             }
-            // TODO Implement lpath code
+            // Check file
+            FILE *fptr = fopen(argv[4], "r");
+            if (fptr == NULL) {
+                fputs("File could't be opened\n", stderr);
+                return -1;
+            }
+            // Load into structure
+            Map map = loadStructure(fptr);
+            // Close file
+            fclose(fptr);
+            // Check for errors
+            if (errno == 1) {
+                fputs("Invalid", stdout);
+                destroyMap(&map);
+                return 0;
+            }
+            // Check structure if valid
+            bool valid = testMap(&map);
+            if (!valid) {
+                printf("Map is invalid, cannot proceed\n");
+                destroyMap(&map);
+                return 0;
+            }
+            // Parse starting coordinates
+            int startX = atoi(argv[2]);
+            int startY = atoi(argv[3]);
+            // Make them programmer friendly
+            startX--;
+            startY--;
+            // Check validity
+            if (!(startX >= 0 && startY >= 0 && startX < map.rows && startY < map.cols)) {
+                fputs("Invalid starting point", stderr);
+                destroyMap(&map);
+                return -1;
+            }
+            // Structure that holds starting coords
+            Coordinates co = {startX, startY};
+            // Solve it for me please
+            solveIt(&map, co, 1);
+            if (errno == 1) {
+                destroyMap(&map);
+                fputs("Cannot enter maze from starting point", stderr);
+                return -1;
+            }
+            // Clean up
+            destroyMap(&map);
         } else if (strcmp(argv[1], "--shortest") == 0) {
             // Check if third argument was provided
             if (argc < 4) {
@@ -186,7 +229,6 @@ int main(int argc, char *argv[]) {
  */
 void solveIt(Map *map, Coordinates co, int left) {
     // Last coords
-    Coordinates past = {co.x, co.y};
 
     Border toFollow = start_border(map, co.x, co.y, left);
     if (toFollow == -1) {
@@ -203,35 +245,88 @@ void solveIt(Map *map, Coordinates co, int left) {
             Update last coordinates
             Update new coordinates
             Calculate new direction */
-
         printf("%d,%d\n", co.x + 1, co.y + 1);
-
         if (left) { // Left hand
-
-
-
+            switch (dir) {
+                case NORTH:
+                    // Move left
+                    if (!isBorder(map, co.x, co.y, LEFT)) {
+                        co.y--;
+                        dir = WEST;
+                    } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 1) { // Move up
+                        co.x--;
+                        dir = NORTH; // Redundant
+                    } else if (!isBorder(map, co.x, co.y, RIGHT)) { // Move right
+                        co.y++;
+                        dir = EAST;
+                    } else { // Move down
+                        co.x++;
+                        dir = SOUTH;
+                    }
+                    break;
+                case SOUTH:
+                    // Move right
+                    if (!isBorder(map, co.x, co.y, RIGHT)) {
+                        co.y++;
+                        dir = EAST;
+                    } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 0) { // Move down
+                        co.x++;
+                        dir = SOUTH; // Redundant
+                    } else if (!isBorder(map, co.x, co.y, LEFT)) { // Move left
+                        co.y--;
+                        dir = WEST;
+                    } else { // Move up
+                        co.x--;
+                        dir = NORTH;
+                    }
+                    break;
+                case EAST:
+                    // Move up
+                    if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 1) {
+                        co.x--;
+                        dir = NORTH;
+                    } else if (!isBorder(map, co.x, co.y, RIGHT)) { // Move right
+                        co.y++;
+                        dir = EAST; // Redundant
+                    } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 0) { // Move down
+                        co.x++;
+                        dir = SOUTH;
+                    } else { // Move left
+                        co.y--;
+                        dir = WEST;
+                    }
+                    break;
+                case WEST:
+                    // Move down
+                    if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 0) {
+                        co.x++;
+                        dir = SOUTH;
+                    } else if (!isBorder(map, co.x, co.y, LEFT)) { // Move left
+                        co.y--;
+                        dir = WEST; // Redundant
+                    } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 1) { // Move up
+                        co.x--;
+                        dir = NORTH;
+                    } else { // Move right
+                        co.y++;
+                        dir = EAST;
+                    }
+                    break;
+            }
         } else { // Right hand
             switch (dir) {
                 case EAST:
-                    // Move down?
+                    // Move down
                     if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 0) {
-                        past.x = co.x;
-                        past.y = co.y;
                         co.x++;
                         dir = SOUTH;
-                    } else if (!isBorder(map, co.x, co.y, RIGHT)) { // Check right
-                        past.x = co.x;
-                        past.y = co.y;
+                    } else if (!isBorder(map, co.x, co.y, RIGHT)) { // Move right
                         co.y++;
                         dir = EAST; // Redundant
-                    } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 1) { // Check up
-                        past.x = co.x;
-                        past.y = co.y;
+                    } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 1) { // Move up
                         co.x--;
                         dir = NORTH;
-                    } else {
-                        past.x = co.x;
-                        past.y = co.y;
+                    } else { // Move left
                         co.y--;
                         dir = WEST;
                     }
@@ -239,23 +334,14 @@ void solveIt(Map *map, Coordinates co, int left) {
                 case NORTH:
                     // Move right
                     if (!isBorder(map, co.x, co.y, RIGHT)) {
-                        past.x = co.x;
-                        past.y = co.y;
                         co.y++;
                         dir = EAST;
                     } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 1) { // Move up
-                        past.x = co.x;
-                        past.y = co.y;
                         co.x--;
                         dir = NORTH; // Redundant
                     } else if (!isBorder(map, co.x, co.y, LEFT)) { // Move left
-                        past.x = co.x;
-                        past.y = co.y;
-                        co.y--;
                         dir = WEST;
                     } else { // Move down
-                        past.x = co.x;
-                        past.y = co.y;
                         co.x++;
                         dir = SOUTH;
                     }
@@ -263,23 +349,15 @@ void solveIt(Map *map, Coordinates co, int left) {
                 case SOUTH:
                     // Move left
                     if (!isBorder(map, co.x, co.y, LEFT)) {
-                        past.x = co.x;
-                        past.y = co.y;
                         co.y--;
                         dir = WEST;
                     } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 0) { // Move down
-                        past.x = co.x;
-                        past.y = co.y;
                         co.x++;
                         dir = SOUTH; // Redundant
                     } else if (!isBorder(map, co.x, co.y, RIGHT)) { // Move right
-                        past.x = co.x;
-                        past.y = co.y;
                         co.y++;
                         dir = EAST;
                     } else { // Move up
-                        past.x = co.x;
-                        past.y = co.y;
                         co.x--;
                         dir = NORTH;
                     }
@@ -287,34 +365,20 @@ void solveIt(Map *map, Coordinates co, int left) {
                 case WEST:
                     // Move up
                     if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 1) {
-                        past.x = co.x;
-                        past.y = co.y;
                         co.x--;
                         dir = NORTH;
                     } else if (!isBorder(map, co.x, co.y, LEFT)) { // Move left
-                        past.x = co.x;
-                        past.y = co.y;
                         co.y--;
                         dir = WEST; // Redundant
                     } else if (!isBorder(map, co.x, co.y, MIDDLE) && (co.x + co.y) % 2 != 0) { // Move down
-                        past.x = co.x;
-                        past.y = co.y;
                         co.x++;
                         dir = SOUTH;
                     } else { // Move right
-                        past.x = co.x;
-                        past.y = co.y;
                         co.y++;
                         dir = EAST;
                     }
                     break;
             }
-            // Check where I can move
-            // Update last coordinates
-            // Update new coordinates
-            // Calculate new direction
-
-            // Check direction
         }
     }
 }
@@ -341,32 +405,6 @@ Direction start_orientation(Map *map, int x, int y) {
         }
     }
     return -1;
-}
-
-/**
- * Return the orientation we are facing
- * @param current Current location
- * @param last Previous location
- * @return Faced orientation
- */
-int getOrientation(Coordinates current, Coordinates last) {
-    if (current.x != last.x) { // Change in x coordinate
-        if (current.x - last.x == 1) {
-            // Step left
-            return EAST;
-        } else {
-            // Step right
-            return WEST;
-        }
-    } else { // Change in Y coordinate
-        if (current.y - last.y == 1) {
-            // Step down
-            return SOUTH;
-        } else {
-            // Step up
-            return NORTH;
-        }
-    }
 }
 
 /**
