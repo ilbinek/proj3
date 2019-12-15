@@ -645,16 +645,17 @@ Map createMap(int a, int b) {
  * @param file File that will be read from
  */
 void fillMap(Map *map, FILE *file) {
-    int i = 0;
-    int cin = 0;
-    while ((cin = fgetc(file)) != EOF) {
-        unsigned char c = (unsigned char) cin;
-        if (c != ' ' && c != '\n') {
-            map->cells[i] = c;
-            i++;
+    unsigned tmp;
+    for (int i = 0; i < map->rows * map->cols; ++i) {
+        if (fscanf(file, "%u", &tmp) != 1) {
+            printf("ERROR\n");
         }
+        if (tmp > 7) {
+            tmp = tmp % 8;
+        }
+        unsigned char c = tmp + '0';
+        map->cells[i] = c;
     }
-
 }
 
 /**
